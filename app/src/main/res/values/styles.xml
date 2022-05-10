@@ -1,0 +1,72 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="ShapeAppearance.ExactaChallenge.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="Widget.ExactaChallenge.NavigationView.Overlay.Base" parent="">
+
+        <item name="itemTextColor">@color/navigation_menu_text_color</item>
+        <item name="itemIconSize">@dimen/size_nav_icon</item>
+        <item name="iconTint">@color/darker_gray</item>
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="itemHorizontalPadding">@dimen/grid_4</item>
+    </style>
+
+    <style name="Widget.ExactaChallenge.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cornerSize">0dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+
+    </style>
+
+    <style name="Widget.ExactaChallenge.IconButton" parent="Widget.MaterialComponents.Button">
+        <item name="tint">@color/darker_gray</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="Widget.ExactaChallenge.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:height">@dimen/height_button</item>
+        <item name="android:textColor">?colorOnPrimary</item>
+    </style>
+
+    <style name="TextAppearance.ExactaChallenge.CurrencyLarge" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="TextAppearance.ExactaChallenge.CurrencySmall" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:alpha">0.8</item>
+    </style>
+
+    <style name="Widget.ExactaChallenge.CalendarDayCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
+
+    <style name="TextAppearance.ExactaChallenge.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/pyidaungsu</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <style name="Widget.ExactaChallenge.CircularCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearance">@style/ShapeAppearanceOverlay.ExactaChallenge.Circular</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.ExactaChallenge.Circular" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%p</item>
+        <item name="borderWidth">2dp</item>
+    </style>
+
+    <style name="Base.TextAppearance.ExactaChallenge.MediumTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:alpha">0.75</item>
+    </style>
+
+
+</resources>

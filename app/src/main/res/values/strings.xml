@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Exacta Challenge</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="main_fragment_label">Main Fragment</string>
+    <string name="modal_fragment_label">Modal Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+
+    <string name="calendar">Calendário</string>
+    <string name="time">Hora</string>
+    <string name="expense_entry">Despesa</string>
+    <string name="name">Nome</string>
+    <string name="amount">Gasto</string>
+    <string name="save">Salvar</string>
+    <string name="description">Descrição</string>
+
+    <!-- list category (tags) -->
+    <string name="income">Renda</string>
+    <string name="social">Social</string>
+    <string name="clothes">Vestuário</string>
+    <string name="housing">Habitação</string>
+    <string name="food">Alimentação</string>
+    <string name="donation">Doação</string>
+    <string name="entertainment">Entretenimento</string>
+    <string name="education">Educação</string>
+    <string name="transportation">Transporte</string>
+    <string name="health_care">Saúde</string>
+
+    <string-array name="tagsCategory">
+        <item>@string/income</item>
+        <item>@string/social</item>
+        <item>@string/clothes</item>
+        <item>@string/housing</item>
+        <item>@string/food</item>
+        <item>@string/donation</item>
+        <item>@string/entertainment</item>
+        <item>@string/education</item>
+        <item>@string/transportation</item>
+        <item>@string/health_care</item>
+    </string-array>
+
+    <string name="search">Search</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="choose_tag">Escolha a Tag</string>
+    <string name="title_main">Lista de Despesas</string>
+    <string name="subtitle_main">Exacta Challenge</string>
+    <string name="search_main">Localizar</string>
+    <string name="search_id">Informe o id…</string>
+</resources>

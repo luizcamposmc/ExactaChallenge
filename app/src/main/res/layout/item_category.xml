@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cd_category"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/size_radius_cv_item"
+    app:cardElevation="4dp"
+    android:backgroundTint="?attr/colorSecondaryVariant"
+    >
+
+    <TextView
+        android:id="@+id/tv_name"
+        style="?attr/textAppearanceSubtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/grid_2"
+        android:textColor="@color/white"
+        android:text="@string/food"
+        />
+</com.google.android.material.card.MaterialCardView>

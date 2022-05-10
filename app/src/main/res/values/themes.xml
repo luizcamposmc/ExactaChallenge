@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.ExactaChallenge" parent="Base.Theme.ExactaChallenge">
+        <item name="colorPrimary">@color/blue_light_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorAccent">@color/blue_light_500</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/dark</item>
+        <item name="rippleColor">@android:color/darker_gray</item>
+        <item name="backgroundColor">@color/gray_200</item>
+        <item name="colorPositive">@color/green_500</item>
+        <item name="colorOnPositive">@color/gray_100</item>
+        <item name="colorNegative">@color/red_400</item>
+        <item name="colorOnNegative">@color/gray_100</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:statusBarColor" tools:targetApi="m">@android:color/transparent</item>
+        <item name="colorWarning">@color/yellow_500</item>
+        <item name="colorOnWarning">@color/dark_gray</item>
+    </style>
+
+    <style name="Theme.Splash" parent="Base.Theme.ExactaChallenge">
+        <item name="android:windowBackground">@color/blue_light_500</item>
+        <item name="android:statusBarColor">@color/blue_light_500</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/gray_300</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_exacta_splash_margin</item>
+        <item name="postSplashScreenTheme">@style/Theme.ExactaChallenge</item>
+    </style>
+
+    <color name="color_statistic_background">@color/gray_100</color>
+
+    <style name="Theme.ExactaChallenge.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.ExactaChallenge.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.ExactaChallenge.BottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetExactaChallenge</item>
+    </style>
+
+    <style name="BottomSheetExactaChallenge" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+</resources>

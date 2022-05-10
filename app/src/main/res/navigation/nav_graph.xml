@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.luizcampos.exactachallenge.ui.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main"
+        >
+        <action
+            android:id="@+id/action_mainFragment_to_expenseModalFragment"
+            app:destination="@id/expenseEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseEntryFragment"
+        android:name="com.luizcampos.exactachallenge.ui.ExpenseEntryFragment"
+        android:label="ExpenseEntryFragment"
+        tools:layout="@layout/fragment_expense_entry"
+        >
+        <action
+            android:id="@+id/action_expenseEntryFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_expenseEntryFragment_to_bottomSheetTagsFragment"
+            app:destination="@id/bottomSheetTagsFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/bottomSheetTagsFragment"
+        android:name="com.luizcampos.exactachallenge.ui.BottomSheetTagsFragment"
+        android:label="fragment_bottom_sheet_tags"
+        tools:layout="@layout/fragment_bottom_sheet_tags" >
+        <action
+            android:id="@+id/action_bottomSheetTagsFragment_to_expenseEntryFragment"
+            app:destination="@id/expenseEntryFragment" />
+    </dialog>
+</navigation>

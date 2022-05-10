@@ -1,0 +1,23 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="grid_1">4dp</dimen>
+    <dimen name="grid_2">8dp</dimen>
+    <dimen name="grid_3">16dp</dimen>
+    <dimen name="grid_4">32dp</dimen>
+
+    <dimen name="size_radius">2dp</dimen>
+    <dimen name="size_radius_cv_item">5dp</dimen>
+    <dimen name="height_button">56dp</dimen>
+
+    <dimen name="width_layout_min">450dp</dimen>
+    <dimen name="with_layout_min_margin">482dp</dimen>
+    <dimen name="spacing_body_text">10sp</dimen>
+    <dimen name="size_nav_icon">20dp</dimen>
+    <dimen name="standard_icon_size">35dp</dimen>
+    <dimen name="small_icon_size">20dp</dimen>
+    <dimen name="card_small_icon_size">16dp</dimen>
+
+    <dimen name="text_card_small">12sp</dimen>
+    <dimen name="text_card_big">20sp</dimen>
+</resources>
