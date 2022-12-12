@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -13,26 +14,17 @@ import com.luizcampos.exactachallenge.R
 import com.luizcampos.exactachallenge.adapter.TagsAdapter
 import com.luizcampos.exactachallenge.databinding.FragmentBottomSheetTagsBinding
 import com.luizcampos.exactachallenge.model.Tags
-import com.luizcampos.exactachallenge.model.database.AppDatabase
-import com.luizcampos.exactachallenge.repository.ExpenseDbDataSource
 import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModel
-import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BottomSheetTagsFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBottomSheetTagsBinding
 
     private lateinit var tagsAdapter: TagsAdapter
 
-    private val expenseViewModel: ExpenseViewModel by activityViewModels(
-        factoryProducer = {
-            val database = AppDatabase.getDatabase(requireContext())
-
-            ExpenseViewModelFactory(
-                expenseRepository = ExpenseDbDataSource(database.expenseDao())
-            )
-        }
-    )
+    private val expenseViewModel: ExpenseViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,13 +32,12 @@ class BottomSheetTagsFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBottomSheetTagsBinding.inflate(inflater, container, false)
+
+        lifecycleScope.launchWhenCreated {
+            initRecyclerView()
+        }
+
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initRecyclerView()
     }
 
     // workaround to put transparent color: https://stackoverflow.com/a/46469709/4743011

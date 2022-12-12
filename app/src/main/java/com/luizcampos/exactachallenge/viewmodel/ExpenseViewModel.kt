@@ -8,11 +8,16 @@ import com.luizcampos.exactachallenge.model.Expense
 import com.luizcampos.exactachallenge.model.Tags
 import com.luizcampos.exactachallenge.repository.ExpenseRepository
 import com.luizcampos.exactachallenge.viewmodel.registration.RegistrationViewParams
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
 
-class ExpenseViewModel constructor(private val expenseRepository: ExpenseRepository) : ViewModel() {
+@HiltViewModel
+class ExpenseViewModel @Inject constructor(
+    private val expenseRepository: ExpenseRepository
+) : ViewModel() {
     private val _tags = MutableLiveData<Tags>()
     val tags: LiveData<Tags>
         get() = _tags

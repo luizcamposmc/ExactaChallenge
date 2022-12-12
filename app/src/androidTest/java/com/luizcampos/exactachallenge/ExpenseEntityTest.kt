@@ -7,7 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.luizcampos.exactachallenge.model.Expense
-import com.luizcampos.exactachallenge.model.database.AppDatabase
+import com.luizcampos.exactachallenge.model.database.ExpenseDatabase
 import com.luizcampos.exactachallenge.model.database.ExpenseEntity
 import com.luizcampos.exactachallenge.model.database.dao.ExpenseDao
 import com.luizcampos.exactachallenge.repository.ExpenseDbDataSource
@@ -22,7 +22,7 @@ import java.io.IOException
 @RunWith(AndroidJUnit4::class)
 class ExpenseEntityTest {
     private lateinit var expenseDao: ExpenseDao
-    private lateinit var appDatabase: AppDatabase
+    private lateinit var expenseDatabase: ExpenseDatabase
     private lateinit var expenseDbDataSource: ExpenseDbDataSource
 
     private val context: Context by lazy {
@@ -31,16 +31,16 @@ class ExpenseEntityTest {
 
     @Before
     fun createDb() {
-        appDatabase = Room.inMemoryDatabaseBuilder(
-            context, AppDatabase::class.java).build()
-        expenseDao = appDatabase.expenseDao()
+        expenseDatabase = Room.inMemoryDatabaseBuilder(
+            context, ExpenseDatabase::class.java).build()
+        expenseDao = expenseDatabase.expenseDao()
         expenseDbDataSource = ExpenseDbDataSource(expenseDao)
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        appDatabase.close()
+        expenseDatabase.close()
     }
 
     @Test
@@ -49,13 +49,13 @@ class ExpenseEntityTest {
         TestUtil.save3Entities(expenseDao)
 
         CoroutineScope(Dispatchers.Main).launch {
-            var expenseList = async {
+            val expenseList = async {
                 expenseDao.getAll()
             }.await()
 
             Log.d("luiz", expenseList.toString())
 
-            var expenseEntity =
+            val expenseEntity =
                 withContext(Dispatchers.Default) {
                     expenseDao.getExpense(2)
                 }
@@ -74,21 +74,21 @@ class ExpenseEntityTest {
         TestUtil.save3Expenses(expenseDbDataSource)
 
         CoroutineScope(Dispatchers.Main).launch {
-            var expenseList = async {
+            val expenseList = async {
                 expenseDbDataSource.getAll()
             }.await()
 
             Log.d("luiz", expenseList.toString())
 
-            var expense = withContext(Dispatchers.Default) {
+            val expense = withContext(Dispatchers.Default) {
                 expenseDbDataSource.getExpense(3)
             }
 
             Log.d("luiz", expense.toString())
 
-            Assert.assertEquals(expense.name, "campos")
+            Assert.assertEquals(expense?.name, "campos")
 
-            Assert.assertEquals(expense.javaClass, Expense::class.java)
+            Assert.assertEquals(expense?.javaClass, Expense::class.java)
         }
     }
 

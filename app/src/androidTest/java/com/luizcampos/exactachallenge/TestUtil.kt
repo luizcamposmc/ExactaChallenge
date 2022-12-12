@@ -9,7 +9,7 @@ import java.util.*
 class TestUtil {
 
     companion object {
-        fun save3Entities(expenseDao: ExpenseDao) {
+        suspend fun save3Entities(expenseDao: ExpenseDao) {
             expenseDao.save(
                 ExpenseEntity(
                     name = "luiz",
@@ -41,7 +41,7 @@ class TestUtil {
             )
         }
 
-        fun save3Expenses(expenseRepository: ExpenseRepository) {
+        suspend fun save3Expenses(expenseRepository: ExpenseRepository) {
             expenseRepository.createExpense(
                 RegistrationViewParams(
                     name = "luiz",

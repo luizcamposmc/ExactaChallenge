@@ -8,29 +8,21 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.luizcampos.exactachallenge.R
 import com.luizcampos.exactachallenge.adapter.ExpenseAdapter
 import com.luizcampos.exactachallenge.databinding.FragmentMainBinding
-import com.luizcampos.exactachallenge.model.database.AppDatabase
-import com.luizcampos.exactachallenge.repository.ExpenseDbDataSource
 import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModel
-import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
     private lateinit var binding: FragmentMainBinding
 
     private lateinit var expenseAdapter: ExpenseAdapter
 
-    private val expenseViewModel: ExpenseViewModel by activityViewModels(
-        factoryProducer = {
-            val database = AppDatabase.getDatabase(requireContext())
-
-            ExpenseViewModelFactory(
-                expenseRepository = ExpenseDbDataSource(database.expenseDao())
-            )
-        }
-    )
+    private val viewModel: ExpenseViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,30 +30,29 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+
+        lifecycleScope.launchWhenCreated {
+            createMenu()
+
+            binding.fbMainAdd.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_expenseModalFragment)
+            }
+
+            viewModel.expenses.observe(viewLifecycleOwner) { listExpense ->
+                expenseAdapter.submitList(listExpense)
+            }
+
+            initRecyclerView()
+        }
+
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        createMenu()
-
-        binding.fbMainAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_expenseModalFragment)
-        }
-
-        expenseViewModel.expenses.observe(viewLifecycleOwner) { listExpense ->
-            expenseAdapter.submitList(listExpense)
-        }
-
-        initRecyclerView()
     }
 
     private fun createMenu() {
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.ic_exacta_menu -> {
-                    expenseViewModel.getExpenses()
+                    viewModel.getExpenses()
                 }
             }
             true
@@ -88,10 +79,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 when(query.isNullOrBlank()) {
                     true -> {
-                        expenseViewModel.getExpenses()
+                        viewModel.getExpenses()
                     }
                     false -> {
-                        expenseViewModel.getExpense(query.toLong())
+                        viewModel.getExpense(query.toLong())
                     }
                 }
 
@@ -106,10 +97,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initRecyclerView() {
         expenseAdapter = ExpenseAdapter { id ->
-            expenseViewModel.deleteExpense(id)
+            viewModel.deleteExpense(id)
         }
         binding.rvExpenses.adapter = expenseAdapter
 
-        expenseViewModel.getExpenses()
+        viewModel.getExpenses()
     }
 }

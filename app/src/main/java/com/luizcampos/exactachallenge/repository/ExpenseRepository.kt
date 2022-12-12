@@ -7,9 +7,9 @@ interface ExpenseRepository {
 
     suspend fun createExpense(registrationViewParams: RegistrationViewParams)
 
-    suspend fun getAll(): List<Expense>?
+    suspend fun getAll(): List<Expense>
 
-    suspend fun getExpense(id: Long): Expense?
+    suspend fun getExpense(id: Long): Expense
 
     suspend fun deleteExpense(id: Long)
 }

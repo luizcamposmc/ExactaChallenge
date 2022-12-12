@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -20,27 +21,18 @@ import com.luizcampos.exactachallenge.databinding.FragmentExpenseEntryBinding
 import com.luizcampos.exactachallenge.helper.MoneyTextWatcher
 import com.luizcampos.exactachallenge.helper.Utils
 import com.luizcampos.exactachallenge.model.Tags
-import com.luizcampos.exactachallenge.model.database.AppDatabase
-import com.luizcampos.exactachallenge.repository.ExpenseDbDataSource
 import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModel
-import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModelFactory
 import com.luizcampos.exactachallenge.viewmodel.registration.RegistrationViewParams
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class ExpenseEntryFragment : Fragment(R.layout.fragment_expense_entry) {
     private lateinit var binding: FragmentExpenseEntryBinding
 
     private lateinit var tagsAdapter: TagsAdapter
 
-    private val expenseViewModel: ExpenseViewModel by activityViewModels(
-        factoryProducer = {
-            val database = AppDatabase.getDatabase(requireContext())
-
-            ExpenseViewModelFactory(
-                expenseRepository = ExpenseDbDataSource(database.expenseDao())
-            )
-        }
-    )
+    private val expenseViewModel: ExpenseViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,12 +77,19 @@ class ExpenseEntryFragment : Fragment(R.layout.fragment_expense_entry) {
             }
         }
 
+        lifecycleScope.launchWhenCreated {
+            createLayout()
+        }
+
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideInputKeyboard()
+    }
 
+    private fun createLayout() {
         if (binding.toolbar.subtitle == null || binding.toolbar.subtitle.toString().isNullOrBlank()) {
             binding.toolbar.subtitle = Utils.getDate(System.currentTimeMillis())
         }
@@ -150,11 +149,6 @@ class ExpenseEntryFragment : Fragment(R.layout.fragment_expense_entry) {
             clearData()
             findNavController().navigate(R.id.action_expenseEntryFragment_to_mainFragment)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideInputKeyboard()
     }
 
     private fun hideInputKeyboard() {
