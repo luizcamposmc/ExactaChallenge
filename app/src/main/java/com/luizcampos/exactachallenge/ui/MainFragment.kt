@@ -13,16 +13,28 @@ import androidx.navigation.fragment.findNavController
 import com.luizcampos.exactachallenge.R
 import com.luizcampos.exactachallenge.adapter.ExpenseAdapter
 import com.luizcampos.exactachallenge.databinding.FragmentMainBinding
+import com.luizcampos.exactachallenge.helper.DatabaseEvent
+import com.luizcampos.exactachallenge.helper.ToastDurationProvider
+import com.luizcampos.exactachallenge.model.Expense
+import com.luizcampos.exactachallenge.repository.ToastRepository
 import com.luizcampos.exactachallenge.viewmodel.ExpenseViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
+
     private lateinit var binding: FragmentMainBinding
 
     private lateinit var expenseAdapter: ExpenseAdapter
 
     private val viewModel: ExpenseViewModel by activityViewModels()
+
+    @Inject
+    lateinit var duration: ToastDurationProvider
+
+    @Inject
+    lateinit var toast: ToastRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,11 +50,28 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 findNavController().navigate(R.id.action_mainFragment_to_expenseModalFragment)
             }
 
-            viewModel.expenses.observe(viewLifecycleOwner) { listExpense ->
-                expenseAdapter.submitList(listExpense)
-            }
-
             initRecyclerView()
+
+            viewModel.expenses.collect { event ->
+                when(event) {
+                    is DatabaseEvent.Success<*> -> {
+                        val list: List<Expense> = if (event.value is Expense) {
+                            listOf(event.value)
+                        } else {
+                            event.value as List<Expense>
+                        }
+
+                        expenseAdapter.submitList(list)
+                    }
+                    is DatabaseEvent.Error -> {
+                        toast.error(event.message, duration.LENGTH_SHORT)
+                    }
+                    is DatabaseEvent.Loading -> {
+                        toast.info(getString(R.string.loading_message), duration.LENGTH_1S)
+                    }
+                    else -> Unit
+                }
+            }
         }
 
         return binding.root

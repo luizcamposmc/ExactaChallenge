@@ -11,10 +11,10 @@ interface ExpenseDao {
     suspend fun save(expense: ExpenseEntity)
 
     @Query("SELECT * FROM $TABLE_NAME")
-    suspend fun getAll(): List<ExpenseEntity>
+    suspend fun getAll(): List<ExpenseEntity>?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE expense_id = :id")
-    suspend fun getExpense(id: Long): ExpenseEntity
+    suspend fun getExpense(id: Long): ExpenseEntity?
 
     @Query("DELETE FROM $TABLE_NAME WHERE expense_id = :id")
     suspend fun deleteExpense(id: Long)

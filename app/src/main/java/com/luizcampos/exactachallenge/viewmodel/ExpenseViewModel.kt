@@ -4,11 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.luizcampos.exactachallenge.helper.DatabaseEvent
 import com.luizcampos.exactachallenge.model.Expense
 import com.luizcampos.exactachallenge.model.Tags
 import com.luizcampos.exactachallenge.repository.ExpenseRepository
 import com.luizcampos.exactachallenge.viewmodel.registration.RegistrationViewParams
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
@@ -18,6 +22,7 @@ import javax.inject.Inject
 class ExpenseViewModel @Inject constructor(
     private val expenseRepository: ExpenseRepository
 ) : ViewModel() {
+
     private val _tags = MutableLiveData<Tags>()
     val tags: LiveData<Tags>
         get() = _tags
@@ -34,18 +39,19 @@ class ExpenseViewModel @Inject constructor(
     val onChooseDateShow
         get() = _onChooseDateShow
 
-    private val _expenses = MutableLiveData<List<Expense>>()
-    val expenses: LiveData<List<Expense>>
-        get() = _expenses
+    private val _expenses = MutableStateFlow<DatabaseEvent>(DatabaseEvent.Empty)
+    val expenses: StateFlow<DatabaseEvent> = _expenses
 
     init {
-        val cTime = System.currentTimeMillis()
-        _currentEntryTime.value = cTime
-        _onChooseTimeShow.value = Calendar.getInstance().apply {
-            timeInMillis = cTime
-        }
-        _onChooseDateShow.value = Calendar.getInstance().apply {
-            timeInMillis = cTime
+        viewModelScope.launch {
+            val cTime = System.currentTimeMillis()
+            _currentEntryTime.value =  cTime
+            _onChooseTimeShow.value = Calendar.getInstance().apply {
+                timeInMillis = cTime
+            }
+            _onChooseDateShow.value = Calendar.getInstance().apply {
+                timeInMillis = cTime
+            }
         }
     }
 
@@ -92,42 +98,54 @@ class ExpenseViewModel @Inject constructor(
     }
 
     fun getExpenses() {
-        viewModelScope.launch {
-            val list = expenseRepository.getAll()
+        _expenses.value = DatabaseEvent.Loading
 
-            if (list == null) {
-                _expenses.value = listOf()
-            } else {
-                _expenses.value = list!!
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            _expenses.value = getAll()
         }
     }
 
     fun saveExpense(registrationViewParams: RegistrationViewParams) {
-        viewModelScope.launch {
+        _expenses.value = DatabaseEvent.Loading
+
+        viewModelScope.launch(Dispatchers.IO) {
             expenseRepository.createExpense(registrationViewParams)
 
-            _expenses.value = expenseRepository.getAll()
+            _expenses.value = getAll()
         }
     }
 
     fun deleteExpense(id: Long) {
-        viewModelScope.launch {
+        _expenses.value = DatabaseEvent.Loading
+
+        viewModelScope.launch(Dispatchers.IO) {
             expenseRepository.deleteExpense(id)
 
-            _expenses.value = expenseRepository.getAll()
+            _expenses.value = getAll()
         }
     }
 
     fun getExpense(id: Long) {
-        viewModelScope.launch {
+        _expenses.value = DatabaseEvent.Loading
+
+        viewModelScope.launch(Dispatchers.IO) {
             val expense = expenseRepository.getExpense(id)
 
             if (expense == null) {
-                _expenses.value = listOf()
+                _expenses.value = DatabaseEvent.Error("ID '$id' não encontrado!")
             } else {
-                _expenses.value = listOf(expense!!)
+                _expenses.value = DatabaseEvent.Success(expense)
             }
         }
+    }
+
+    private suspend fun getAll() : DatabaseEvent.Success<List<Expense>>{
+        val list = expenseRepository.getAll()
+
+        if (list.isNullOrEmpty()) {
+            return DatabaseEvent.Success(listOf())
+        }
+
+        return DatabaseEvent.Success(list)
     }
 }

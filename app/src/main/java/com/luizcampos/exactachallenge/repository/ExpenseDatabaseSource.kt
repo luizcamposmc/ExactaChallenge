@@ -13,9 +13,9 @@ class ExpenseDatabaseSource
 ) : ExpenseRepository {
     override suspend fun createExpense(registrationViewParams: RegistrationViewParams) =  dao.save(registrationViewParams.toExpenseEntity())
 
-    override suspend fun getAll(): List<Expense> = dao.getAll().map { expenseEntity ->  expenseEntity.toExpense() }
+    override suspend fun getAll(): List<Expense>? = dao.getAll()?.map { expenseEntity ->  expenseEntity.toExpense() }
 
-    override suspend fun getExpense(id: Long): Expense = dao.getExpense(id).toExpense()
+    override suspend fun getExpense(id: Long): Expense? = dao.getExpense(id)?.toExpense()
 
     override suspend fun deleteExpense(id: Long) = dao.deleteExpense(id)
 }

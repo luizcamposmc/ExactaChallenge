@@ -52,4 +52,6 @@
     <string name="subtitle_main">Exacta Challenge</string>
     <string name="search_main">Localizar</string>
     <string name="search_id">Informe o id…</string>
+
+    <string name="loading_message">Carregando…</string>
 </resources>

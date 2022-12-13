@@ -28,10 +28,14 @@ To build this project, you require:
 
 * [Viewmodel](https://developer.android.com/topic/libraries/architecture/viewmodel) - Presenter for persisting view state across config changes
 * [MutableStateFlow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-mutable-state-flow) - Provides a setter for value
+* [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow) - Is a state-holder observable flow that emits the current and new state updates to its collectors
+* [MutableLiveData](https://developer.android.com/reference/kotlin/androidx/lifecycle/MutableLiveData) - LiveData which publicly exposes setValue and postValue method
+* [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) - Is considers an observer, which is represented by the Observer class, to be in an active state if its lifecycle is in the STARTED or RESUMED state. LiveData only notifies active observers about updates
 * [Room](https://developer.android.com/training/data-storage/room) - Provides abstraction layer over SQLite
 * [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Library Support for coroutines,provides `runBlocking` coroutine builder used in tests
 * [Espresso](https://developer.android.com/training/testing/espresso) - Test framework to write UI Tests
-* [Dagger Hilt](https://dagger.dev/hilt) - handles dependency injection
+* [Dagger Hilt](https://dagger.dev/hilt) - Handles dependency injection
+* [Toasty](https://github.com/GrenderG/Toasty) - The usual Toast, but with steroids
   
 ## License
 
