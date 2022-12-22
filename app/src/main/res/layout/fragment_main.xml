@@ -28,6 +28,16 @@
 
     <!--    <include layout="@layout/content_main" />-->
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivSplashCard"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_expenses"
         android:layout_width="match_parent"
