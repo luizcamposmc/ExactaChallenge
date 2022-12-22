@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.luizcampos.exactachallenge.helper.DatabaseEvent
+import com.luizcampos.exactachallenge.helper.FlowEvent
 import com.luizcampos.exactachallenge.model.Expense
 import com.luizcampos.exactachallenge.model.Tags
+import com.luizcampos.exactachallenge.model.cards.request.ShuffleRequestModel
+import com.luizcampos.exactachallenge.model.cards.response.ShuffleResponseModel
+import com.luizcampos.exactachallenge.repository.CardRepository
 import com.luizcampos.exactachallenge.repository.ExpenseRepository
 import com.luizcampos.exactachallenge.viewmodel.registration.RegistrationViewParams
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExpenseViewModel @Inject constructor(
-    private val expenseRepository: ExpenseRepository
+    private val expenseRepository: ExpenseRepository,
+    private val repository: CardRepository
 ) : ViewModel() {
 
     private val _tags = MutableLiveData<Tags>()
@@ -39,8 +43,13 @@ class ExpenseViewModel @Inject constructor(
     val onChooseDateShow
         get() = _onChooseDateShow
 
-    private val _expenses = MutableStateFlow<DatabaseEvent>(DatabaseEvent.Empty)
-    val expenses: StateFlow<DatabaseEvent> = _expenses
+    private val _expenses = MutableStateFlow<FlowEvent>(FlowEvent.Empty)
+    val expenses: StateFlow<FlowEvent> = _expenses
+
+    private val _cards = MutableStateFlow<FlowEvent>(FlowEvent.Empty)
+    val cards: StateFlow<FlowEvent> = _cards
+
+    private var shuffleResponseModel: ShuffleResponseModel? = null
 
     init {
         viewModelScope.launch {
@@ -98,7 +107,7 @@ class ExpenseViewModel @Inject constructor(
     }
 
     fun getExpenses() {
-        _expenses.value = DatabaseEvent.Loading
+        _expenses.value = FlowEvent.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             _expenses.value = getAll()
@@ -106,7 +115,7 @@ class ExpenseViewModel @Inject constructor(
     }
 
     fun saveExpense(registrationViewParams: RegistrationViewParams) {
-        _expenses.value = DatabaseEvent.Loading
+        _expenses.value = FlowEvent.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             expenseRepository.createExpense(registrationViewParams)
@@ -116,7 +125,7 @@ class ExpenseViewModel @Inject constructor(
     }
 
     fun deleteExpense(id: Long) {
-        _expenses.value = DatabaseEvent.Loading
+        _expenses.value = FlowEvent.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             expenseRepository.deleteExpense(id)
@@ -126,26 +135,60 @@ class ExpenseViewModel @Inject constructor(
     }
 
     fun getExpense(id: Long) {
-        _expenses.value = DatabaseEvent.Loading
+        _expenses.value = FlowEvent.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             val expense = expenseRepository.getExpense(id)
 
             if (expense == null) {
-                _expenses.value = DatabaseEvent.Error("ID '$id' não encontrado!")
+                _expenses.value = FlowEvent.Error("ID '$id' não encontrado!")
             } else {
-                _expenses.value = DatabaseEvent.Success(expense)
+                _expenses.value = FlowEvent.Success(expense)
             }
         }
     }
 
-    private suspend fun getAll() : DatabaseEvent.Success<List<Expense>>{
+    fun nextImage() {
+        _cards.value = FlowEvent.Loading
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (
+                shuffleResponseModel == null ||
+                shuffleResponseModel?.remaining == 0
+            ) {
+                val shuffleCards = repository.shuffleCards(
+                    ShuffleRequestModel(jokers_enabled = true)
+                )
+
+                if (shuffleCards.data == null) {
+                    _cards.value = FlowEvent.Error(shuffleCards.message!!)
+                } else {
+                    shuffleResponseModel = shuffleCards.data
+                }
+            }
+
+            val cardsDrawn = repository.drawCard(
+                deckId = shuffleResponseModel!!.deck_id,
+                count = 1
+            )
+
+            if (cardsDrawn.data == null) {
+                _cards.value = FlowEvent.Error(cardsDrawn.message!!)
+            } else {
+                val uri = cardsDrawn.data.cards[0].image
+
+                _cards.value = FlowEvent.Success(uri)
+            }
+        }
+    }
+
+    private suspend fun getAll() : FlowEvent.Success<List<Expense>>{
         val list = expenseRepository.getAll()
 
         if (list.isNullOrEmpty()) {
-            return DatabaseEvent.Success(listOf())
+            return FlowEvent.Success(listOf())
         }
 
-        return DatabaseEvent.Success(list)
+        return FlowEvent.Success(list)
     }
 }

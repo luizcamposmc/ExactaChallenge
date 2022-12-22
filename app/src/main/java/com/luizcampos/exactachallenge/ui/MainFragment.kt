@@ -3,17 +3,22 @@ package com.luizcampos.exactachallenge.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.luizcampos.exactachallenge.R
 import com.luizcampos.exactachallenge.adapter.ExpenseAdapter
 import com.luizcampos.exactachallenge.databinding.FragmentMainBinding
-import com.luizcampos.exactachallenge.helper.DatabaseEvent
+import com.luizcampos.exactachallenge.helper.FlowEvent
 import com.luizcampos.exactachallenge.helper.ToastDurationProvider
 import com.luizcampos.exactachallenge.model.Expense
 import com.luizcampos.exactachallenge.repository.ToastRepository
@@ -22,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainFragment : Fragment(R.layout.fragment_main) {
+class MainFragment: Fragment(R.layout.fragment_main) {
 
     private lateinit var binding: FragmentMainBinding
 
@@ -54,7 +59,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
             viewModel.expenses.collect { event ->
                 when(event) {
-                    is DatabaseEvent.Success<*> -> {
+                    is FlowEvent.Success<*> -> {
                         val list: List<Expense> = if (event.value is Expense) {
                             listOf(event.value)
                         } else {
@@ -63,10 +68,39 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                         expenseAdapter.submitList(list)
                     }
-                    is DatabaseEvent.Error -> {
+                    is FlowEvent.Error -> {
                         toast.error(event.message, duration.LENGTH_SHORT)
                     }
-                    is DatabaseEvent.Loading -> {
+                    FlowEvent.Loading -> {
+                        toast.info(getString(R.string.loading_message), duration.LENGTH_1S)
+                    }
+                    else -> Unit
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.cards.collect { event ->
+                when(event) {
+                    is FlowEvent.Success<*> -> {
+                        binding.ivSplashCard.visibility = View.VISIBLE
+                        Glide.with(this@MainFragment)
+                            .load(event.value)
+                            .into(binding.ivSplashCard)
+
+                        Handler(
+                            Looper.getMainLooper()
+                        ).postDelayed(
+                            {
+                                binding.ivSplashCard.visibility = View.GONE
+                            },
+                            1500
+                        )
+                    }
+                    is FlowEvent.Error -> {
+                        toast.error(event.message, duration.LENGTH_SHORT)
+                    }
+                    FlowEvent.Loading -> {
                         toast.info(getString(R.string.loading_message), duration.LENGTH_1S)
                     }
                     else -> Unit
@@ -82,6 +116,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             when (menuItem.itemId) {
                 R.id.ic_exacta_menu -> {
                     viewModel.getExpenses()
+                    if (binding.ivSplashCard.visibility == View.GONE) {
+                        viewModel.nextImage()
+                    }
                 }
             }
             true
